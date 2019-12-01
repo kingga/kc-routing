@@ -1,7 +1,7 @@
 import { IErrorHandler } from '../contracts/handlers/IErrorHandler';
 import { IRequest } from '../contracts/IRequest';
 import { IResponse } from '../contracts/IResponse';
-import createApp from './web-handler/src/entry-server';
+import createApp from './web-handler/entry-server';
 import { createRenderer } from 'vue-server-renderer';
 import { HtmlResponse } from '../responses/HtmlResponse';
 

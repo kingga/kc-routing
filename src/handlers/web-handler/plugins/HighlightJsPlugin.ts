@@ -1,6 +1,6 @@
 import _Vue from 'vue';
 import { DirectiveBinding } from 'vue/types/options';
-import { registerLanguage, highlightBlock, HLJSStatic, IModeBase } from 'highlightjs';
+import { highlightBlock, HLJSStatic, IModeBase, registerLanguage } from 'highlightjs';
 import { JsonStackFrame } from '@/handlers/StackFrame';
 
 interface BindingValues {
@@ -81,7 +81,7 @@ async function highlight(el: HTMLElement, binding: BindingValues): Promise<void>
         .catch(() => reject('Could not import the language file.'));
     } else {
       highlightCode();
-      resolve();
+      return resolve();
     }
   });
 }

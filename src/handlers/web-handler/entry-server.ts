@@ -20,20 +20,22 @@ interface Context {
 }
 
 export default (context: Context): Promise<Vue> => {
-  return new Promise(async (resolve, reject) => {
-    const { app, router, store } = await createApp({
+  return new Promise((resolve, reject) => {
+    const args = {
       before: () => Promise.resolve(),
       after: () => Promise.resolve(),
+    };
+
+    createApp(args).then(({ app, router, store }) => {
+      router.push(prepareUrlForRouting(context.url));
+
+      router.onReady(() => {
+        context.rendered = () => {
+          context.state = store.state;
+        };
+
+        resolve(app);
+      }, reject);
     });
-
-    router.push(prepareUrlForRouting(context.url));
-
-    router.onReady(() => {
-      context.rendered = () => {
-        context.state = store.state;
-      };
-
-      resolve(app);
-    }, reject);
   });
 };

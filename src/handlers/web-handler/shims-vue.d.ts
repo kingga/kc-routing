@@ -1,4 +1,5 @@
 declare module '*.vue' {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   import Vue from 'vue';
   export default Vue;
 }

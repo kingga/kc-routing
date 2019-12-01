@@ -1,9 +1,9 @@
-import { IRouter, RouteMethod, IRoute } from '../contracts/http/IRouter';
+import { IRouter, RouteMethod, IRoute } from '@/contracts/IRouter';
 import { Request, Response } from 'express-serve-static-core';
 import { ExpressRequest } from './requests/ExpressRequest';
-import { IRequest } from '../contracts/http/IRequest';
+import { IRequest } from '@/contracts/IRequest';
 import { JsonHandler } from './handlers/JsonHandler';
-import { IErrorHandler } from '../contracts/http/handlers/IErrorHandler';
+import { IErrorHandler } from '@/contracts/handlers/IErrorHandler';
 import { WebHandler } from './handlers/WebHandler';
 
 type RouteCallback = (request: Request, response: Response) => void;
@@ -91,20 +91,7 @@ export class Router implements IRouter {
   public constructor(app: IBasicRouter, handlers?: ErrorHandlers) {
     this.app = app;
     this.routes = new Map<RouteMethod, IRoute[]>();
-
-    if (!handlers) {
-      handlers = {};
-    }
-
-    if (!handlers.web) {
-      handlers.web = new WebHandler();
-    }
-
-    if (!handlers.api) {
-      handlers.api = new JsonHandler();
-    }
-
-    this.handlers = handlers;
+    this.handlers = handlers || {};
   }
 
   /**
@@ -276,14 +263,14 @@ export class Router implements IRouter {
    */
   protected handleError(error: Error, response: Response, request: IRequest): void {
     const handler: IErrorHandler = request.toJson().method === 'GET'
-      ? this.handlers.web
-      : this.handlers.api;
+      ? this.handlers.web || new WebHandler()
+      : this.handlers.api || new JsonHandler();
 
     handler.handle(error, request).then((res) => {
       response
-          .set(res.getHeaders())
-          .status(500)
-          .send(res.getBody())
+        .set(res.getHeaders())
+        .status(500)
+        .send(res.getBody());
     });
   }
 }
