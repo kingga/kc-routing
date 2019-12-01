@@ -46,6 +46,7 @@
     "prepublish": "yarn lint && yarn test && tsc && yarn build"
   },
   "dependencies": {
+    "@akryum/vue-cli-plugin-ssr": "^0.6.0",
     "highlight.js": "^9.16.2",
     "stacktrace-js": "^2.0.1",
     "vue": "^2.6.10",
