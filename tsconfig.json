@@ -9,6 +9,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "inlineSourceMap": true,
+    "declaration": true,
     "baseUrl": "./",
     "paths": {
       "@/*": [
@@ -20,7 +21,8 @@
     }
   },
   "include": [
-    "./src"
+    "./src",
+    "./index.ts"
   ],
   "exclude": [
     "node_modules",

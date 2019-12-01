@@ -42,12 +42,11 @@
     "lint": "eslint ./src/**/*.ts",
     "fix": "eslint ./src/**/*.ts --quiet --fix",
     "watch": "wepback --mode development --watch",
-    "build": "webpack --mode production",
-    "prepublish": "yarn lint && yarn test && yarn build"
+    "build": "yarn tsc && webpack --mode production",
+    "prepublish": "yarn lint && yarn test && tsc && yarn build"
   },
   "dependencies": {
     "highlight.js": "^9.16.2",
-    "highlightjs": "^9.16.2",
     "stacktrace-js": "^2.0.1",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",

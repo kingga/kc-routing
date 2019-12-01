@@ -1,6 +1,6 @@
 import _Vue from 'vue';
 import { DirectiveBinding } from 'vue/types/options';
-import { highlightBlock, HLJSStatic, IModeBase, registerLanguage } from 'highlightjs';
+import { highlightBlock, HLJSStatic, IModeBase, registerLanguage } from 'highlight.js';
 import { JsonStackFrame } from '@/handlers/StackFrame';
 
 interface BindingValues {
