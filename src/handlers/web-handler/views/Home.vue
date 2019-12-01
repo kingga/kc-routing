@@ -53,8 +53,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { JsonError } from '../../../Error';
-import { JsonStackFrame } from '../../../StackFrame';
+import { JsonError } from '@/handlers/Error';
+import { JsonStackFrame } from '@/handlers/StackFrame';
 
 interface AppInfo {
   error: JsonError;

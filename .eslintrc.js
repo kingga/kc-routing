@@ -36,5 +36,11 @@ module.exports = {
             'error',
             'always'
         ]
-    }
+    },
+    'overrides': [
+      {
+        'files': ['./src/handlers/web-handler/*'],
+        'excludedFiles': 'shims-*.d.ts',
+      },
+    ],
 };

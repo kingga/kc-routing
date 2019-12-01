@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
-import { JsonError } from '../../../Error';
-import { JsonStackFrame } from '../../../StackFrame';
+import { JsonError } from '@/handlers/Error';
+import { JsonStackFrame } from '@/handlers/StackFrame';
 
 interface AppInfo {
   error?: JsonError;

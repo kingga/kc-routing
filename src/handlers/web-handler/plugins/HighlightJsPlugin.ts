@@ -1,7 +1,7 @@
 import _Vue from 'vue';
 import { DirectiveBinding } from 'vue/types/options';
 import { registerLanguage, highlightBlock, HLJSStatic, IModeBase } from 'highlightjs';
-import { JsonStackFrame } from '../../../StackFrame';
+import { JsonStackFrame } from '@/handlers/StackFrame';
 
 interface BindingValues {
   language: string;
