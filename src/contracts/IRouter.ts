@@ -21,13 +21,23 @@ export interface IRoute {
   controller: (request: IRequest) => Promise<IResponse> | void;
 }
 
+/**
+ * This is just the normal route but with the method attached to it.
+ */
+export interface ICompiledRoute extends IRoute {
+  /**
+   * The routes method, e.g. GET, POST, ...
+   */
+  method: RouteMethod;
+}
+
 export interface IRouter {
   /**
    * Get all of the registered routes or all of the routes for a given method.
-   * @param {RouteMethod | undefined} method The request method if you want to filter it out.
-   * @return {IRoute[]} The list of routes.
+   * @param method The request method if you want to filter it out.
+   * @return The list of routes.
    */
-  getRoutes(method?: RouteMethod): IRoute[];
+  getRoutes(method?: RouteMethod): ICompiledRoute[];
 
   /**
    * Find a route by it's assigned name.

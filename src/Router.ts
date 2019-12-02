@@ -1,4 +1,4 @@
-import { IRouter, RouteMethod, IRoute } from '@/contracts/IRouter';
+import { IRouter, RouteMethod, IRoute, ICompiledRoute } from '@/contracts/IRouter';
 import { Request, Response } from 'express-serve-static-core';
 import { ExpressRequest } from './requests/ExpressRequest';
 import { IRequest } from '@/contracts/IRequest';
@@ -76,7 +76,7 @@ export class Router implements IRouter {
   /**
    * The list of created routes.
    */
-  protected routes: Map<RouteMethod, IRoute[]>;
+  protected routes: Map<RouteMethod, ICompiledRoute[]>;
 
   /**
    * The handlers which are used when an error is caught.
@@ -90,21 +90,21 @@ export class Router implements IRouter {
    */
   public constructor(app: IBasicRouter, handlers?: ErrorHandlers) {
     this.app = app;
-    this.routes = new Map<RouteMethod, IRoute[]>();
+    this.routes = new Map<RouteMethod, ICompiledRoute[]>();
     this.handlers = handlers || {};
   }
 
   /**
    * Get all of the registered routes or all of the routes for a given method.
    * @param {RouteMethod | undefined} method The request method if you want to filter it out.
-   * @return {IRoute[]} The list of routes.
+   * @return The list of routes.
    */
-  public getRoutes(method?: RouteMethod): IRoute[] {
+  public getRoutes(method?: RouteMethod): ICompiledRoute[] {
     if (method) {
       return this.routes.get(method) || [];
     }
 
-    let allRoutes: IRoute[] = [];
+    let allRoutes: ICompiledRoute[] = [];
 
     this.routes.forEach((routes) => {
       allRoutes = allRoutes.concat(routes);
@@ -116,9 +116,9 @@ export class Router implements IRouter {
   /**
    * Find a route by it's assigned name.
    * @param {string} name The name of the route.
-   * @return {IRoute | null} The route if it exists.
+   * @return The route if it exists.
    */
-  public findRouteByName(name: string): IRoute | null {
+  public findRouteByName(name: string): ICompiledRoute | null {
     return this.getRoutes().find((route) => route.name === name) || null;
   }
 
@@ -244,14 +244,16 @@ export class Router implements IRouter {
         throw new Error(`The route ${route.path} already exists.`);
       }
 
-      if (r.name === route.name) {
+      if (route.name && r.name === route.name) {
         throw new Error(`There is already a route with the name ${route.name}.`);
       }
     });
 
+    const compiledRoute: ICompiledRoute = { ...route, method };
+
     // Add the new route to the array and put it back into the map.
     const routes = this.routes.get(method) || [];
-    routes.push(route);
+    routes.push(compiledRoute);
     this.routes.set(method, routes);
   }
 

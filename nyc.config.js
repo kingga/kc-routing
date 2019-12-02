@@ -2,6 +2,7 @@ module.exports = {
     extensions: ['.ts', '.tsx'],
     include: [
         './src/**/*',
+        './src/*',
     ],
     exclude: [
         '**/*/*.d.ts',
