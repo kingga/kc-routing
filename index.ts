@@ -18,7 +18,14 @@ import { WebHandler } from './src/handlers/WebHandler';
 // Router.
 import { Router } from './src/Router';
 
+import * as express from 'express';
+
+const app = express();
+const router = new Router(app);
+
 export {
+  app,
+  router,
   IRequest,
   RequestJson,
   IResponse,

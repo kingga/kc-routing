@@ -1,0 +1,34 @@
+{
+  "name": "@kingga/kc-routing-web-handler",
+  "version": "1.0.0",
+  "description": "The web handler component for kc-routing.",
+  "main": "dist/index.js",
+  "repository": "https://github.com/kingga/kc-routing-web-handler",
+  "author": "Isaac Skelton <contact@isaacskelton.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/highlight.js": "^9.12.3",
+    "base64-inline-loader": "^1.1.1",
+    "css-loader": "^3.2.1",
+    "file-loader": "^5.0.2",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "vue-loader": "^15.7.2",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "highlight.js": "^9.16.2",
+    "stacktrace-js": "^2.0.1",
+    "vue": "^2.6.10"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "yarn build --watch"
+  }
+}

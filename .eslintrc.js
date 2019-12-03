@@ -14,10 +14,6 @@ module.exports = {
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
     ],
-    // 'globals': {
-    //     'Atomics': 'readonly',
-    //     'SharedArrayBuffer': 'readonly'
-    // },
     'plugins': [
         '@typescript-eslint'
     ],

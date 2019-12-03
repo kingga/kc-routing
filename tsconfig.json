@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "none",
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
@@ -27,6 +27,7 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "dist"
+    "dist",
+    "web-handler/**/*"
   ]
 }

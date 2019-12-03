@@ -18,24 +18,16 @@
     "@typescript-eslint/parser": "^2.9.0",
     "axios": "^0.19.0",
     "chai": "^4.2.0",
-    "css-loader": "^3.2.0",
-    "dart-sass": "^1.23.7",
+    "copy-webpack-plugin": "^5.0.5",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "eslint-plugin-vue": "^6.0.1",
-    "file-loader": "^5.0.2",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "prettier": "^1.19.1",
-    "sass": "^1.23.7",
-    "sass-loader": "^8.0.0",
-    "style-loader": "^1.0.1",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2",
-    "vue-loader": "^15.7.2",
-    "vue-template-compiler": "^2.6.10",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
@@ -43,17 +35,11 @@
     "test": "nyc mocha 'tests/**/*.ts' --require ts-node/register",
     "lint": "eslint ./src/**/*.ts",
     "fix": "eslint ./src/**/*.ts --quiet --fix",
-    "watch": "wepback --mode development --watch",
-    "build": "yarn tsc && webpack --mode production",
-    "prepublish": "yarn lint && yarn test && tsc && yarn build"
+    "build": "yarn tsc",
+    "prepublish": "yarn test && yarn build"
   },
   "dependencies": {
-    "@akryum/vue-cli-plugin-ssr": "^0.6.0",
-    "highlight.js": "^9.16.2",
-    "stacktrace-js": "^2.0.1",
-    "vue": "^2.6.10",
-    "vue-router": "^3.1.3",
-    "vue-server-renderer": "^2.6.10",
-    "vuex": "^3.1.2"
+    "express": "^4.17.1",
+    "stacktrace-js": "^2.0.1"
   }
 }
