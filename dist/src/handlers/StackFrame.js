@@ -1,79 +1,48 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { StackFrame, fromError } from '~@/stacktrace-js/stacktrace.js';
-// import { StackFrame, fromError } from 'stacktrace-js';
 const fs_1 = require("fs");
-/**
- * Convert the stacktrace-js frames into JsonStackFrames.
- * @param stack The stack frame from stacktrace-js.
+/*
+ * Parse methods taken from stacktrace-parser. It couldn't be imported.
  */
-function toJsonStackFrame(stack) {
-    return stack.map((frame) => {
-        let fileContents = '';
-        if (frame.fileName) {
-            try {
-                fileContents = fs_1.readFileSync(frame.fileName).toString();
-            }
-            catch (_e) {
-                // ...
-            }
+function parseNode(line) {
+    const parts = /^\s*at (?:((?:\[object object\])?[^\\/]+(?: \[as \S+\])?) )?\(?(.*?):(\d+)(?::(\d+))?\)?\s*$/i.exec(line);
+    if (!parts) {
+        return null;
+    }
+    return {
+        fileName: parts[2],
+        functionName: parts[1] || '<unknown>',
+        args: [],
+        lineNumber: +parts[3],
+        columnNumber: parts[4] ? +parts[4] : 0,
+        fileContents: fs_1.readFileSync(parts[2]).toString(),
+    };
+}
+function parse(stack) {
+    if (!stack) {
+        return [];
+    }
+    const lines = stack.split('\n');
+    return lines.reduce((stack, line) => {
+        const parsed = parseNode(line);
+        if (parsed !== null) {
+            stack.push(parsed);
         }
-        return {
-            columnNumber: frame.columnNumber || 0,
-            lineNumber: frame.lineNumber || 0,
-            fileName: frame.fileName || '',
-            functionName: frame.functionName || '',
-            args: frame.args || [],
-            fileContents,
-        };
-    });
+        return stack;
+    }, []);
 }
 /**
  * Convert and Error into a JsonError.
  * @param error The error to convert.
  */
-function toJson(_error) {
+function toJson(error) {
     return new Promise((resolve) => {
         resolve({
             type: 'Error',
             message: 'Test',
-            stack: toJsonStackFrame([
-                {
-                    columnNumber: 2,
-                    lineNumber: 4,
-                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\StackFrame.ts',
-                    functionName: 'functionName'
-                },
-                {
-                    columnNumber: 15,
-                    lineNumber: 5,
-                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\JsonHandler.ts',
-                    functionName: 'foo'
-                },
-                {
-                    columnNumber: 100,
-                    lineNumber: 30,
-                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\Router.ts',
-                    functionName: 'bar'
-                },
-            ]),
+            stack: parse(error.stack),
         });
-        // fromError(error)
-        //   .then((stack: StackFrame[]) => {
-        //     resolve({
-        //       type: error.name,
-        //       message: error.message,
-        //       stack: toJsonStackFrame(stack),
-        //     });
-        //   })
-        //   .catch(() => {
-        //     resolve({
-        //       type: 'unknown',
-        //       message: error.toString(),
-        //       stack: [],
-        //     });
-        //   });
     });
 }
 exports.toJson = toJson;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3RhY2tGcmFtZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9oYW5kbGVycy9TdGFja0ZyYW1lLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsMEVBQTBFO0FBQzFFLHlEQUF5RDtBQUN6RCwyQkFBa0M7QUFxQ2xDOzs7R0FHRztBQUNILFNBQVMsZ0JBQWdCLENBQUMsS0FBbUI7SUFDM0MsT0FBTyxLQUFLLENBQUMsR0FBRyxDQUFDLENBQUMsS0FBSyxFQUFrQixFQUFFO1FBQ3pDLElBQUksWUFBWSxHQUFHLEVBQUUsQ0FBQztRQUV0QixJQUFJLEtBQUssQ0FBQyxRQUFRLEVBQUU7WUFDbEIsSUFBSTtnQkFDRixZQUFZLEdBQUcsaUJBQVksQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLENBQUMsUUFBUSxFQUFFLENBQUM7YUFDeEQ7WUFBQyxPQUFPLEVBQUUsRUFBRTtnQkFDWCxNQUFNO2FBQ1A7U0FDRjtRQUVELE9BQU87WUFDTCxZQUFZLEVBQUUsS0FBSyxDQUFDLFlBQVksSUFBSSxDQUFDO1lBQ3JDLFVBQVUsRUFBRSxLQUFLLENBQUMsVUFBVSxJQUFJLENBQUM7WUFDakMsUUFBUSxFQUFFLEtBQUssQ0FBQyxRQUFRLElBQUksRUFBRTtZQUM5QixZQUFZLEVBQUUsS0FBSyxDQUFDLFlBQVksSUFBSSxFQUFFO1lBQ3RDLElBQUksRUFBRSxLQUFLLENBQUMsSUFBSSxJQUFJLEVBQUU7WUFDdEIsWUFBWTtTQUNiLENBQUM7SUFDSixDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUFFRDs7O0dBR0c7QUFDSCxTQUFnQixNQUFNLENBQUMsTUFBYTtJQUNsQyxPQUFPLElBQUksT0FBTyxDQUFDLENBQUMsT0FBTyxFQUFFLEVBQUU7UUFDN0IsT0FBTyxDQUFDO1lBQ04sSUFBSSxFQUFFLE9BQU87WUFDYixPQUFPLEVBQUUsTUFBTTtZQUNmLEtBQUssRUFBRSxnQkFBZ0IsQ0FBQztnQkFDdEI7b0JBQ0UsWUFBWSxFQUFFLENBQUM7b0JBQ2YsVUFBVSxFQUFFLENBQUM7b0JBQ2IsUUFBUSxFQUFFLDhFQUE4RTtvQkFDeEYsWUFBWSxFQUFFLGNBQWM7aUJBQzdCO2dCQUNEO29CQUNFLFlBQVksRUFBRSxFQUFFO29CQUNoQixVQUFVLEVBQUUsQ0FBQztvQkFDYixRQUFRLEVBQUUsK0VBQStFO29CQUN6RixZQUFZLEVBQUUsS0FBSztpQkFDcEI7Z0JBQ0Q7b0JBQ0UsWUFBWSxFQUFFLEdBQUc7b0JBQ2pCLFVBQVUsRUFBRSxFQUFFO29CQUNkLFFBQVEsRUFBRSxnRUFBZ0U7b0JBQzFFLFlBQVksRUFBRSxLQUFLO2lCQUNwQjthQUNGLENBQUM7U0FDSCxDQUFDLENBQUM7UUFDSCxtQkFBbUI7UUFDbkIscUNBQXFDO1FBQ3JDLGdCQUFnQjtRQUNoQiwwQkFBMEI7UUFDMUIsZ0NBQWdDO1FBQ2hDLHdDQUF3QztRQUN4QyxVQUFVO1FBQ1YsT0FBTztRQUNQLG1CQUFtQjtRQUNuQixnQkFBZ0I7UUFDaEIseUJBQXlCO1FBQ3pCLG1DQUFtQztRQUNuQyxtQkFBbUI7UUFDbkIsVUFBVTtRQUNWLFFBQVE7SUFDVixDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUExQ0Qsd0JBMENDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3RhY2tGcmFtZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9oYW5kbGVycy9TdGFja0ZyYW1lLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsMkJBQWtDO0FBbUNsQzs7R0FFRztBQUVILFNBQVMsU0FBUyxDQUFDLElBQVk7SUFDN0IsTUFBTSxLQUFLLEdBQUcsK0ZBQStGLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO0lBRXpILElBQUksQ0FBQyxLQUFLLEVBQUU7UUFDVixPQUFPLElBQUksQ0FBQztLQUNiO0lBRUQsT0FBTztRQUNMLFFBQVEsRUFBRSxLQUFLLENBQUMsQ0FBQyxDQUFDO1FBQ2xCLFlBQVksRUFBRSxLQUFLLENBQUMsQ0FBQyxDQUFDLElBQUksV0FBVztRQUNyQyxJQUFJLEVBQUUsRUFBRTtRQUNSLFVBQVUsRUFBRSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7UUFDckIsWUFBWSxFQUFFLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7UUFDdEMsWUFBWSxFQUFFLGlCQUFZLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsUUFBUSxFQUFFO0tBQ2hELENBQUM7QUFDSixDQUFDO0FBRUQsU0FBUyxLQUFLLENBQUMsS0FBYztJQUMzQixJQUFJLENBQUMsS0FBSyxFQUFFO1FBQ1YsT0FBTyxFQUFFLENBQUM7S0FDWDtJQUVELE1BQU0sS0FBSyxHQUFHLEtBQUssQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLENBQUM7SUFFaEMsT0FBTyxLQUFLLENBQUMsTUFBTSxDQUFDLENBQUMsS0FBdUIsRUFBRSxJQUFJLEVBQUUsRUFBRTtRQUNwRCxNQUFNLE1BQU0sR0FBRyxTQUFTLENBQUMsSUFBSSxDQUFDLENBQUM7UUFFL0IsSUFBSSxNQUFNLEtBQUssSUFBSSxFQUFFO1lBQ25CLEtBQUssQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUM7U0FDcEI7UUFFRCxPQUFPLEtBQUssQ0FBQztJQUNmLENBQUMsRUFBRSxFQUFFLENBQUMsQ0FBQztBQUNULENBQUM7QUFFRDs7O0dBR0c7QUFDSCxTQUFnQixNQUFNLENBQUMsS0FBWTtJQUNqQyxPQUFPLElBQUksT0FBTyxDQUFDLENBQUMsT0FBTyxFQUFFLEVBQUU7UUFDN0IsT0FBTyxDQUFDO1lBQ04sSUFBSSxFQUFFLE9BQU87WUFDYixPQUFPLEVBQUUsTUFBTTtZQUNmLEtBQUssRUFBRSxLQUFLLENBQUMsS0FBSyxDQUFDLEtBQUssQ0FBQztTQUMxQixDQUFDLENBQUM7SUFDTCxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUFSRCx3QkFRQyJ9

@@ -3,11 +3,12 @@ import { IResponse } from '../contracts/IResponse';
 import { HtmlResponse } from '../responses/HtmlResponse';
 import { toJson } from './StackFrame';
 import { readFileSync } from 'fs';
+import { resolve as resolvePath } from 'path';
 
 export class WebHandler implements IErrorHandler {
   public handle(error: Error): Promise<IResponse> {
     return new Promise((resolve) => {
-      const script = readFileSync('../web-handler/dist/web.js');
+      const script = readFileSync(resolvePath(__dirname, '../../../web-handler/dist/web.js'));
 
       toJson(error)
         .then((error) => {

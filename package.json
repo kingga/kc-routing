@@ -35,11 +35,9 @@
     "test": "nyc mocha 'tests/**/*.ts' --require ts-node/register",
     "lint": "eslint ./src/**/*.ts",
     "fix": "eslint ./src/**/*.ts --quiet --fix",
-    "build": "yarn tsc",
-    "prepublish": "yarn test && yarn build"
+    "build": "yarn tsc"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "stacktrace-js": "^2.0.1"
+    "express": "^4.17.1"
   }
 }

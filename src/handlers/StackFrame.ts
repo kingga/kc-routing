@@ -1,9 +1,5 @@
-// import { StackFrame, fromError } from '~@/stacktrace-js/stacktrace.js';
-// import { StackFrame, fromError } from 'stacktrace-js';
 import { readFileSync } from 'fs';
 import { JsonError } from './Error';
-
-type StackFrame = any;
 
 export interface JsonStackFrame {
   /**
@@ -37,77 +33,55 @@ export interface JsonStackFrame {
   fileContents: string;
 }
 
-/**
- * Convert the stacktrace-js frames into JsonStackFrames.
- * @param stack The stack frame from stacktrace-js.
+/*
+ * Parse methods taken from stacktrace-parser. It couldn't be imported.
  */
-function toJsonStackFrame(stack: StackFrame[]): JsonStackFrame[] {
-  return stack.map((frame): JsonStackFrame => {
-    let fileContents = '';
 
-    if (frame.fileName) {
-      try {
-        fileContents = readFileSync(frame.fileName).toString();
-      } catch (_e) {
-        // ...
-      }
+function parseNode(line: string): JsonStackFrame | null {
+  const parts = /^\s*at (?:((?:\[object object\])?[^\\/]+(?: \[as \S+\])?) )?\(?(.*?):(\d+)(?::(\d+))?\)?\s*$/i.exec(line);
+
+  if (!parts) {
+    return null;
+  }
+
+  return {
+    fileName: parts[2],
+    functionName: parts[1] || '<unknown>',
+    args: [],
+    lineNumber: +parts[3],
+    columnNumber: parts[4] ? +parts[4] : 0,
+    fileContents: readFileSync(parts[2]).toString(),
+  };
+}
+
+function parse(stack?: string): JsonStackFrame[] {
+  if (!stack) {
+    return [];
+  }
+
+  const lines = stack.split('\n');
+
+  return lines.reduce((stack: JsonStackFrame[], line) => {
+    const parsed = parseNode(line);
+
+    if (parsed !== null) {
+      stack.push(parsed);
     }
 
-    return {
-      columnNumber: frame.columnNumber || 0,
-      lineNumber: frame.lineNumber || 0,
-      fileName: frame.fileName || '',
-      functionName: frame.functionName || '',
-      args: frame.args || [],
-      fileContents,
-    };
-  });
+    return stack;
+  }, []);
 }
 
 /**
  * Convert and Error into a JsonError.
  * @param error The error to convert.
  */
-export function toJson(_error: Error): Promise<JsonError> {
+export function toJson(error: Error): Promise<JsonError> {
   return new Promise((resolve) => {
     resolve({
       type: 'Error',
       message: 'Test',
-      stack: toJsonStackFrame([
-        {
-          columnNumber: 2,
-          lineNumber: 4,
-          fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\StackFrame.ts',
-          functionName: 'functionName'
-        },
-        {
-          columnNumber: 15,
-          lineNumber: 5,
-          fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\JsonHandler.ts',
-          functionName: 'foo'
-        },
-        {
-          columnNumber: 100,
-          lineNumber: 30,
-          fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\Router.ts',
-          functionName: 'bar'
-        },
-      ]),
+      stack: parse(error.stack),
     });
-    // fromError(error)
-    //   .then((stack: StackFrame[]) => {
-    //     resolve({
-    //       type: error.name,
-    //       message: error.message,
-    //       stack: toJsonStackFrame(stack),
-    //     });
-    //   })
-    //   .catch(() => {
-    //     resolve({
-    //       type: 'unknown',
-    //       message: error.toString(),
-    //       stack: [],
-    //     });
-    //   });
   });
 }
