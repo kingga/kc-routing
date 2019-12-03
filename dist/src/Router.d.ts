@@ -1,4 +1,4 @@
-import { IRouter, RouteMethod, IRoute } from '@/contracts/IRouter';
+import { IRouter, RouteMethod, IRoute, ICompiledRoute } from '@/contracts/IRouter';
 import { Request, Response } from 'express-serve-static-core';
 import { IRequest } from '@/contracts/IRequest';
 import { IErrorHandler } from '@/contracts/handlers/IErrorHandler';
@@ -62,7 +62,7 @@ export declare class Router implements IRouter {
     /**
      * The list of created routes.
      */
-    protected routes: Map<RouteMethod, IRoute[]>;
+    protected routes: Map<RouteMethod, ICompiledRoute[]>;
     /**
      * The handlers which are used when an error is caught.
      */
@@ -76,15 +76,15 @@ export declare class Router implements IRouter {
     /**
      * Get all of the registered routes or all of the routes for a given method.
      * @param {RouteMethod | undefined} method The request method if you want to filter it out.
-     * @return {IRoute[]} The list of routes.
+     * @return The list of routes.
      */
-    getRoutes(method?: RouteMethod): IRoute[];
+    getRoutes(method?: RouteMethod): ICompiledRoute[];
     /**
      * Find a route by it's assigned name.
      * @param {string} name The name of the route.
-     * @return {IRoute | null} The route if it exists.
+     * @return The route if it exists.
      */
-    findRouteByName(name: string): IRoute | null;
+    findRouteByName(name: string): ICompiledRoute | null;
     /**
      * Create a GET route.
      * @param {IRoute} route The routes details.

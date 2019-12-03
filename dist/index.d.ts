@@ -10,4 +10,6 @@ import { JsonStackFrame, toJson } from './src/handlers/StackFrame';
 import { JsonHandler } from './src/handlers/JsonHandler';
 import { WebHandler } from './src/handlers/WebHandler';
 import { Router } from './src/Router';
-export { IRequest, RequestJson, IResponse, RouteMethod, IRoute, IRouter, IErrorHandler, ExpressRequest, HtmlResponse, JsonResponse, JsonError, JsonStackFrame, toJson, JsonHandler, WebHandler, Router, };
+declare const app: import("express-serve-static-core").Express;
+declare const router: Router;
+export { app, router, IRequest, RequestJson, IResponse, RouteMethod, IRoute, IRouter, IErrorHandler, ExpressRequest, HtmlResponse, JsonResponse, JsonError, JsonStackFrame, toJson, JsonHandler, WebHandler, Router, };

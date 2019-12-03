@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const stacktrace_js_1 = require("stacktrace-js");
+// import { StackFrame, fromError } from '~@/stacktrace-js/stacktrace.js';
+// import { StackFrame, fromError } from 'stacktrace-js';
 const fs_1 = require("fs");
 /**
  * Convert the stacktrace-js frames into JsonStackFrames.
@@ -31,24 +32,48 @@ function toJsonStackFrame(stack) {
  * Convert and Error into a JsonError.
  * @param error The error to convert.
  */
-function toJson(error) {
+function toJson(_error) {
     return new Promise((resolve) => {
-        stacktrace_js_1.fromError(error)
-            .then((stack) => {
-            resolve({
-                type: error.name,
-                message: error.message,
-                stack: toJsonStackFrame(stack),
-            });
-        })
-            .catch(() => {
-            resolve({
-                type: 'unknown',
-                message: error.toString(),
-                stack: [],
-            });
+        resolve({
+            type: 'Error',
+            message: 'Test',
+            stack: toJsonStackFrame([
+                {
+                    columnNumber: 2,
+                    lineNumber: 4,
+                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\StackFrame.ts',
+                    functionName: 'functionName'
+                },
+                {
+                    columnNumber: 15,
+                    lineNumber: 5,
+                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\handlers\\JsonHandler.ts',
+                    functionName: 'foo'
+                },
+                {
+                    columnNumber: 100,
+                    lineNumber: 30,
+                    fileName: 'D:\\Development\\kings-collections\\kc-routing\\src\\Router.ts',
+                    functionName: 'bar'
+                },
+            ]),
         });
+        // fromError(error)
+        //   .then((stack: StackFrame[]) => {
+        //     resolve({
+        //       type: error.name,
+        //       message: error.message,
+        //       stack: toJsonStackFrame(stack),
+        //     });
+        //   })
+        //   .catch(() => {
+        //     resolve({
+        //       type: 'unknown',
+        //       message: error.toString(),
+        //       stack: [],
+        //     });
+        //   });
     });
 }
 exports.toJson = toJson;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3RhY2tGcmFtZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9oYW5kbGVycy9TdGFja0ZyYW1lLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsaURBQXNEO0FBQ3RELDJCQUFrQztBQW1DbEM7OztHQUdHO0FBQ0gsU0FBUyxnQkFBZ0IsQ0FBQyxLQUFtQjtJQUMzQyxPQUFPLEtBQUssQ0FBQyxHQUFHLENBQUMsQ0FBQyxLQUFLLEVBQWtCLEVBQUU7UUFDekMsSUFBSSxZQUFZLEdBQUcsRUFBRSxDQUFDO1FBRXRCLElBQUksS0FBSyxDQUFDLFFBQVEsRUFBRTtZQUNsQixJQUFJO2dCQUNGLFlBQVksR0FBRyxpQkFBWSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUMsQ0FBQyxRQUFRLEVBQUUsQ0FBQzthQUN4RDtZQUFDLE9BQU8sRUFBRSxFQUFFO2dCQUNYLE1BQU07YUFDUDtTQUNGO1FBRUQsT0FBTztZQUNMLFlBQVksRUFBRSxLQUFLLENBQUMsWUFBWSxJQUFJLENBQUM7WUFDckMsVUFBVSxFQUFFLEtBQUssQ0FBQyxVQUFVLElBQUksQ0FBQztZQUNqQyxRQUFRLEVBQUUsS0FBSyxDQUFDLFFBQVEsSUFBSSxFQUFFO1lBQzlCLFlBQVksRUFBRSxLQUFLLENBQUMsWUFBWSxJQUFJLEVBQUU7WUFDdEMsSUFBSSxFQUFFLEtBQUssQ0FBQyxJQUFJLElBQUksRUFBRTtZQUN0QixZQUFZO1NBQ2IsQ0FBQztJQUNKLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQztBQUVEOzs7R0FHRztBQUNILFNBQWdCLE1BQU0sQ0FBQyxLQUFZO0lBQ2pDLE9BQU8sSUFBSSxPQUFPLENBQUMsQ0FBQyxPQUFPLEVBQUUsRUFBRTtRQUM3Qix5QkFBUyxDQUFDLEtBQUssQ0FBQzthQUNiLElBQUksQ0FBQyxDQUFDLEtBQUssRUFBRSxFQUFFO1lBQ2QsT0FBTyxDQUFDO2dCQUNOLElBQUksRUFBRSxLQUFLLENBQUMsSUFBSTtnQkFDaEIsT0FBTyxFQUFFLEtBQUssQ0FBQyxPQUFPO2dCQUN0QixLQUFLLEVBQUUsZ0JBQWdCLENBQUMsS0FBSyxDQUFDO2FBQy9CLENBQUMsQ0FBQztRQUNMLENBQUMsQ0FBQzthQUNELEtBQUssQ0FBQyxHQUFHLEVBQUU7WUFDVixPQUFPLENBQUM7Z0JBQ04sSUFBSSxFQUFFLFNBQVM7Z0JBQ2YsT0FBTyxFQUFFLEtBQUssQ0FBQyxRQUFRLEVBQUU7Z0JBQ3pCLEtBQUssRUFBRSxFQUFFO2FBQ1YsQ0FBQyxDQUFDO1FBQ0wsQ0FBQyxDQUFDLENBQUM7SUFDUCxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUFsQkQsd0JBa0JDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiU3RhY2tGcmFtZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9oYW5kbGVycy9TdGFja0ZyYW1lLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsMEVBQTBFO0FBQzFFLHlEQUF5RDtBQUN6RCwyQkFBa0M7QUFxQ2xDOzs7R0FHRztBQUNILFNBQVMsZ0JBQWdCLENBQUMsS0FBbUI7SUFDM0MsT0FBTyxLQUFLLENBQUMsR0FBRyxDQUFDLENBQUMsS0FBSyxFQUFrQixFQUFFO1FBQ3pDLElBQUksWUFBWSxHQUFHLEVBQUUsQ0FBQztRQUV0QixJQUFJLEtBQUssQ0FBQyxRQUFRLEVBQUU7WUFDbEIsSUFBSTtnQkFDRixZQUFZLEdBQUcsaUJBQVksQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLENBQUMsUUFBUSxFQUFFLENBQUM7YUFDeEQ7WUFBQyxPQUFPLEVBQUUsRUFBRTtnQkFDWCxNQUFNO2FBQ1A7U0FDRjtRQUVELE9BQU87WUFDTCxZQUFZLEVBQUUsS0FBSyxDQUFDLFlBQVksSUFBSSxDQUFDO1lBQ3JDLFVBQVUsRUFBRSxLQUFLLENBQUMsVUFBVSxJQUFJLENBQUM7WUFDakMsUUFBUSxFQUFFLEtBQUssQ0FBQyxRQUFRLElBQUksRUFBRTtZQUM5QixZQUFZLEVBQUUsS0FBSyxDQUFDLFlBQVksSUFBSSxFQUFFO1lBQ3RDLElBQUksRUFBRSxLQUFLLENBQUMsSUFBSSxJQUFJLEVBQUU7WUFDdEIsWUFBWTtTQUNiLENBQUM7SUFDSixDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUFFRDs7O0dBR0c7QUFDSCxTQUFnQixNQUFNLENBQUMsTUFBYTtJQUNsQyxPQUFPLElBQUksT0FBTyxDQUFDLENBQUMsT0FBTyxFQUFFLEVBQUU7UUFDN0IsT0FBTyxDQUFDO1lBQ04sSUFBSSxFQUFFLE9BQU87WUFDYixPQUFPLEVBQUUsTUFBTTtZQUNmLEtBQUssRUFBRSxnQkFBZ0IsQ0FBQztnQkFDdEI7b0JBQ0UsWUFBWSxFQUFFLENBQUM7b0JBQ2YsVUFBVSxFQUFFLENBQUM7b0JBQ2IsUUFBUSxFQUFFLDhFQUE4RTtvQkFDeEYsWUFBWSxFQUFFLGNBQWM7aUJBQzdCO2dCQUNEO29CQUNFLFlBQVksRUFBRSxFQUFFO29CQUNoQixVQUFVLEVBQUUsQ0FBQztvQkFDYixRQUFRLEVBQUUsK0VBQStFO29CQUN6RixZQUFZLEVBQUUsS0FBSztpQkFDcEI7Z0JBQ0Q7b0JBQ0UsWUFBWSxFQUFFLEdBQUc7b0JBQ2pCLFVBQVUsRUFBRSxFQUFFO29CQUNkLFFBQVEsRUFBRSxnRUFBZ0U7b0JBQzFFLFlBQVksRUFBRSxLQUFLO2lCQUNwQjthQUNGLENBQUM7U0FDSCxDQUFDLENBQUM7UUFDSCxtQkFBbUI7UUFDbkIscUNBQXFDO1FBQ3JDLGdCQUFnQjtRQUNoQiwwQkFBMEI7UUFDMUIsZ0NBQWdDO1FBQ2hDLHdDQUF3QztRQUN4QyxVQUFVO1FBQ1YsT0FBTztRQUNQLG1CQUFtQjtRQUNuQixnQkFBZ0I7UUFDaEIseUJBQXlCO1FBQ3pCLG1DQUFtQztRQUNuQyxtQkFBbUI7UUFDbkIsVUFBVTtRQUNWLFFBQVE7SUFDVixDQUFDLENBQUMsQ0FBQztBQUNMLENBQUM7QUExQ0Qsd0JBMENDIn0=

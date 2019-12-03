@@ -1,43 +1,41 @@
 import { IErrorHandler } from '../contracts/handlers/IErrorHandler';
-import { IRequest } from '../contracts/IRequest';
 import { IResponse } from '../contracts/IResponse';
-import createApp from './web-handler/entry-server';
-import { createRenderer } from 'vue-server-renderer';
 import { HtmlResponse } from '../responses/HtmlResponse';
+import { toJson } from './StackFrame';
+import { readFileSync } from 'fs';
 
 export class WebHandler implements IErrorHandler {
-  public handle(error: Error, request: IRequest): Promise<IResponse> {
+  public handle(error: Error): Promise<IResponse> {
     return new Promise((resolve) => {
-      // Load the Vue template.
-      createApp({ url: '/', state: {} })
-        .then((app) => {
-          const renderer = createRenderer();
-          renderer.renderToString(app, (err: Error | null, html: string): void => {
-            if (err) {
-              console.error(err);
-              return;
-            }
+      const script = readFileSync('../web-handler/dist/web.js');
 
-            resolve(new HtmlResponse(html));
-          });
-        })
-        .catch(() => {
-          console.log({ error, request });
+      toJson(error)
+        .then((error) => {
+          const html = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <meta http-equiv="X-UA-Compatible" content="ie=edge">
+              <title>KC Error Handler</title>
+          </head>
+          <body>
+              <div id="app"></div>
+
+              <script>
+                window.error = ${JSON.stringify(error)};
+              </script>
+
+              <script>
+                  ${script}
+              </script>
+          </body>
+          </html>
+          `;
+
+          resolve(new HtmlResponse(html));
         });
-      // resolve(new HtmlResponse('<h1>Hello, world!</h1>'));
-
-      // const app = createApp({ url: '/', state: {} });
-
-      console.log({ error: !error, request: !request });
-
-
-
-      // toJson(error).then((error) => {
-      //   resolve(new JsonResponse({
-      //     error,
-      //     request: request.toJson(),
-      //   }));
-      // });
     });
   }
 }
