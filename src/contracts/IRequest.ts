@@ -32,7 +32,7 @@ export interface IRequest {
    * @param key The key in the requests body.
    * @param defaultValue The default value if the key isn't found.
    */
-  get<T>(key: string, defaultValue: T): T | null;
+  get<T>(key: string, defaultValue: T | null): T | null;
 
   /**
    * Get a value from the route.
