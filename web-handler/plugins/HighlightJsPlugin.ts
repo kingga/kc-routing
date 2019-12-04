@@ -30,7 +30,7 @@ function truncateCode(code: string, stack: JsonStackFrame): TruncatedCode {
   // This should get 'x' amount before stack line and 'x' amount after, evenly
   // spreading the lines out around it.
   const maxLines = 26;
-  const eitherSide = maxLines / 2;
+  const eitherSide = Math.ceil(maxLines / 2);
   const { lineNumber } = stack;
   const diff = eitherSide - lineNumber;
   const firstLine = diff > 0 ? 0 : lineNumber - eitherSide;
@@ -46,26 +46,29 @@ function truncateCode(code: string, stack: JsonStackFrame): TruncatedCode {
 
 function highlight(el: HTMLElement, binding: BindingValues): void {
   const highlightCode = () => {
-    const truncated = truncateCode(binding.code, binding.stack);
+    let truncated: TruncatedCode | undefined;
+    // const truncated = truncateCode(binding.code, binding.stack);
     const code = el.querySelector('pre');
     const lineNumbers = el.querySelector('.line-numbers');
 
     if (code) {
-      // code.textContent = truncated.code;
-      const highlightedCode = highlightJs(binding.language, truncated.code, true).value;
-      code.innerHTML = highlightedCode;
+      const highlightedCode = highlightJs(binding.language, binding.code, true).value;
+      truncated = truncateCode(highlightedCode, binding.stack);
+      code.innerHTML = truncated.code;
+      // code.innerHTML = highlightedCode;
     }
 
-    if (lineNumbers && truncated.lastLine - truncated.firstLine > 0) {
+    if (truncated && lineNumbers && truncated.lastLine - truncated.firstLine > 0) {
       let html = '<ul><li>';
       const lines: number[] = Array(truncated.maxLines).fill(0);
-      html += lines.map((_c, i: number) => truncated.firstLine + i).join('</li><li>');
+      html += lines.map((_c, i: number) => (truncated || { firstLine: 0 }).firstLine + i).join('</li><li>');
       html += '</li></ul>';
 
       lineNumbers.innerHTML = html;
 
       // Find the active line and highlight it.
-      const line = lineNumbers.querySelector(`li:nth-of-type(${binding.stack.lineNumber})`);
+      const lineNumber = binding.stack.lineNumber - truncated.firstLine;
+      const line = lineNumbers.querySelector(`li:nth-of-type(${lineNumber})`);
 
       if (line) {
         line.classList.add('active');

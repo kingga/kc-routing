@@ -26,6 +26,7 @@ export class WebHandler implements IErrorHandler {
 
               <script>
                 window.error = ${JSON.stringify(error)};
+                window.env = ${JSON.stringify(process.env)};
               </script>
 
               <script>

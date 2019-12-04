@@ -6,6 +6,12 @@ Vue.config.productionTip = false;
 
 Vue.use(HighlightJsPlugin);
 
-new Vue({
+const app = new Vue({
     render: (h) => h(App),
 }).$mount('#app');
+
+console.log({
+  App,
+  vue: app,
+  HighlightJsPlugin,
+});

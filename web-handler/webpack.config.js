@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
   entry: './main.ts',
-  mode: 'production',
+  mode: 'development',
   output: {
     filename: 'web.js',
     publicPath: './dist/',
@@ -19,7 +19,9 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
+        use: [
+          'vue-loader',
+        ],
       },
       {
         test: /\.s[a|c]ss$/,
@@ -31,16 +33,7 @@ module.exports = {
       },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: 'base64-inline-loader',
-            // loader: 'file-loader',
-            // options: {
-            //   name: '[name].[ext]',
-            //   outputPath: './dist/fonts/',
-            // },
-          },
-        ],
+        loader: 'base64-inline-loader',
       },
     ],
   },

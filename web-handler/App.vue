@@ -47,17 +47,35 @@
       <p v-if="current">No comments for this stack frame.</p>
     </section>
 
-    <section class="info"></section>
+    <section class="info">
+      <h2>View In Editor</h2>
+
+      <a :href="getLinkFor('vscode')">VS Code</a>
+      <a :href="getLinkFor('atom')">Atom</a>
+      <a :href="getLinkFor('sublime')">Sublime</a>
+      <a :href="getLinkFor('emacs')">Emacs</a>
+      <a :href="getLinkFor('textmate')">Textmate</a>
+      <a :href="getLinkFor('macvim')">MacVim</a>
+
+      <h2>Environment Details</h2>
+
+      <p v-for="(value, key) in env" :key="key">
+        <strong>{{ key }}:</strong> {{ typeof value !== 'string' ? JSON.stringify(value) : value }}
+      </p>
+    </section>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { JsonError, JsonStackFrame } from './structs';
+import { CodeEditorFactory } from './classes/Factories/CodeEditorFactory';
+import { CodeEditors } from './classes/contracts/ICodeEditorLinkFactory';
 
 interface AppInfo {
   error?: JsonError;
   current?: JsonStackFrame;
+  env?: any;
 }
 
 export default Vue.extend({
@@ -67,7 +85,14 @@ export default Vue.extend({
     return {
       error: undefined,
       current: undefined,
+      env: undefined,
     };
+  },
+
+  computed: {
+    linkFactory() {
+      return new CodeEditorFactory();
+    },
   },
 
   methods: {
@@ -82,11 +107,28 @@ export default Vue.extend({
 
       return file;
     },
+
+    getLinkFor(editor: CodeEditors): string {
+        if (!this.current) {
+            return '#';
+        }
+
+        const e = this.linkFactory.make(editor);
+
+        if (e) {
+          const { fileName, lineNumber, columnNumber } = this.current;
+
+          return new e().getLink(fileName, lineNumber, columnNumber);
+        }
+
+        return '#';
+    }
   },
 
   mounted(): void {
     this.error = window.error;
-    this.current = this.error.stack[0] || undefined;
+    this.current = window.error.stack[0] || undefined;
+    this.env = window.env;
   },
 });
 </script>
@@ -117,29 +159,29 @@ $fs-tiny: 0.7em;
 $ff-header: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 $ff-text: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
-@font-face {
-  font-family: 'Fira Code';
-  src: url('./assets/fonts/woff2/FiraCode-Regular.woff2') format('woff2'),
-    url('./assets/fonts/woff/FiraCode-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: 'Fira Code';
+//   src: url('./assets/fonts/woff2/FiraCode-Regular.woff2') format('woff2'),
+//     url('./assets/fonts/woff/FiraCode-Regular.woff') format('woff');
+//   font-weight: 400;
+//   font-style: normal;
+// }
 
-@font-face {
-  font-family: 'Fira Code';
-  src: url('./assets/fonts/woff2/FiraCode-Medium.woff2') format('woff2'),
-    url('./assets/fonts/woff/FiraCode-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: 'Fira Code';
+//   src: url('./assets/fonts/woff2/FiraCode-Medium.woff2') format('woff2'),
+//     url('./assets/fonts/woff/FiraCode-Medium.woff') format('woff');
+//   font-weight: 500;
+//   font-style: normal;
+// }
 
-@font-face {
-  font-family: 'Fira Code';
-  src: url('./assets/fonts/woff2/FiraCode-Bold.woff2') format('woff2'),
-    url('./assets/fonts/woff/FiraCode-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: 'Fira Code';
+//   src: url('./assets/fonts/woff2/FiraCode-Bold.woff2') format('woff2'),
+//     url('./assets/fonts/woff/FiraCode-Bold.woff') format('woff');
+//   font-weight: 700;
+//   font-style: normal;
+// }
 
 * {
   box-sizing: border-box;
@@ -165,8 +207,8 @@ body {
   .error-page {
     display: grid;
     grid-template-areas: 'sidebar code' 'sidebar info';
-    grid-template-columns: minmax(350px, 30%) 1fr;
-    grid-template-rows: 65% auto;
+    grid-template-columns: minmax(350px, 30%) 70%;
+    grid-template-rows: auto auto;
     width: 100%;
     height: 100%;
 
@@ -306,6 +348,11 @@ body {
 
     .info {
       grid-area: info;
+      padding: 75px 50px;
+
+      p {
+        margin: 5px 0;
+      }
     }
   }
 }
