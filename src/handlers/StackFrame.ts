@@ -38,10 +38,17 @@ export interface JsonStackFrame {
  */
 
 function parseNode(line: string): JsonStackFrame | null {
+  let fileContents = '';
   const parts = /^\s*at (?:((?:\[object object\])?[^\\/]+(?: \[as \S+\])?) )?\(?(.*?):(\d+)(?::(\d+))?\)?\s*$/i.exec(line);
 
   if (!parts) {
     return null;
+  }
+
+  try {
+    fileContents = readFileSync(parts[2]).toString();
+  } catch (_e) {
+    fileContents = '';
   }
 
   return {
@@ -50,7 +57,7 @@ function parseNode(line: string): JsonStackFrame | null {
     args: [],
     lineNumber: +parts[3],
     columnNumber: parts[4] ? +parts[4] : 0,
-    fileContents: readFileSync(parts[2]).toString(),
+    fileContents,
   };
 }
 
@@ -76,11 +83,15 @@ function parse(stack?: string): JsonStackFrame[] {
  * Convert and Error into a JsonError.
  * @param error The error to convert.
  */
-export function toJson(error: Error): Promise<JsonError> {
+export function toJson(error: Error | string): Promise<JsonError> {
   return new Promise((resolve) => {
+    if (typeof error === 'string') {
+      error = new Error(error);
+    }
+
     resolve({
       type: 'Error',
-      message: 'Test',
+      message: error.message,
       stack: parse(error.stack),
     });
   });

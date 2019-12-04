@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "none",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
